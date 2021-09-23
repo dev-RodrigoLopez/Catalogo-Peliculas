@@ -8,10 +8,10 @@ import 'package:peliculas/providers/movie.dart';
 
 class PopularMovieResponse {
     PopularMovieResponse({
-        this.page,
-        this.results,
-        this.totalPages,
-        this.totalResults,
+        required this.page,
+        required this.results,
+        required this.totalPages,
+        required this.totalResults,
     });
 
     int page;

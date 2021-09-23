@@ -8,11 +8,11 @@ import 'package:peliculas/providers/movie.dart';
 
 class NowPlayingResponse {
     NowPlayingResponse({
-        this.dates,
-        this.page,
-        this.results,
-        this.totalPages,
-        this.totalResults,
+        required this.dates,
+        required this.page,
+        required this.results,
+        required this.totalPages,
+        required this.totalResults,
     });
 
     Dates dates;
@@ -37,8 +37,8 @@ class NowPlayingResponse {
 
 class Dates {
     Dates({
-        this.maximum,
-        this.minimum,
+        required this.maximum,
+        required this.minimum,
     });
 
     DateTime maximum;

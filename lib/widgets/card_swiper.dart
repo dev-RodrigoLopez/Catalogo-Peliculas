@@ -7,7 +7,7 @@ class CardSwiper extends StatelessWidget {
 
   final List<Movie> movies;
 
-  const CardSwiper({Key key, this.movies}) : super(key: key);
+  const CardSwiper({Key? key, required this.movies}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -45,11 +45,11 @@ class CardSwiper extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               child: FadeInImage(
                 placeholder:  AssetImage( 'assets/no-image.jpg' ),
-                image: NetworkImage( movie.fullPosterImge ),
+                image: NetworkImage( movie.fullPosterImg ),
                 fit: BoxFit.cover,
               ),
             ),
-            onTap: ()=> Navigator.pushNamed(context, 'details', arguments: 'movie-instance'),
+            onTap: ()=> Navigator.pushNamed(context, 'details', arguments: movie),
           );
 
         },

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:peliculas/helpers/debouncer.dart';
 import 'package:peliculas/models/credits_response.dart';
 import 'package:peliculas/models/now_playing_response.dart';
 import 'package:peliculas/models/popular_movie_response.dart';
+import 'package:peliculas/models/search_movies_response.dart';
 import 'package:peliculas/providers/movie.dart';
 
 class MoviesProvider extends ChangeNotifier {
@@ -18,6 +22,13 @@ class MoviesProvider extends ChangeNotifier {
   
   int popularPage = 0;
 
+  final debouncer = Debouncer(
+    duration: Duration( milliseconds: 500 ),
+  );
+
+  final StreamController<List<Movie>> _suggestionStreamController = new StreamController.broadcast();
+  Stream<List<Movie>> get suggestionStream => this._suggestionStreamController.stream;
+
   MoviesProvider() {
     print('Movies Provider inicializado');
     this.getOnDisplayMovies();  
@@ -26,7 +37,7 @@ class MoviesProvider extends ChangeNotifier {
 
   Future<String>_getJsonData( String endPoint, [int page = 1 ]) async{
 
-      var url = Uri.https(_baseUrl, endPoint ,{
+      final url = Uri.https(_baseUrl, endPoint ,{
         'api_key' : _apiAkey,
         'language'  :  _language,
         'page'  : '$page'
@@ -71,6 +82,40 @@ class MoviesProvider extends ChangeNotifier {
 
        return creditsResponse.cast;
 
+    }
+
+    Future<List<Movie>> SearchMovie( String movie ) async{
+         final url = Uri.https(_baseUrl, '3/search/movie' ,{
+        'api_key' : _apiAkey,
+        'language'  :  _language,
+        'include_adult': 'true',
+        'query': movie
+      });
+
+      final response = await http.get(url);
+      final searchMovieResponse =  SearchMovieResponse.fromJson(  response.body );
+
+      return searchMovieResponse.results;
+
+    }
+
+    void getSuggestionByQuery( String seachTerm ){
+
+      debouncer.value = '';
+      debouncer.onValue = ( value ) async{
+
+        final results = await this.SearchMovie(value);
+        this._suggestionStreamController.add(results);
+
+      };
+
+      final timer = Timer.periodic(Duration( milliseconds:300 ), (_) { 
+
+        debouncer.value = seachTerm;
+
+      });
+
+      Future.delayed( Duration( milliseconds: 301 ) ).then((_) => timer.cancel());
 
     }
 

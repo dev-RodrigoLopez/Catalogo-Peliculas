@@ -21,10 +21,7 @@ class DetailsScreen extends StatelessWidget {
           SliverList( 
             delegate: SliverChildListDelegate([
               PosterAndTitle( 
-                posterPath: movie.fullPosterImg, 
-                movieTitle: movie.title,
-                originalTitle: movie.originalTitle,
-                movieVoteAverege: movie.voteAverage.toString(),
+                movie: movie,
               ),
               _Overview( overview: movie.overview ),
               SizedBox( height: 50 ),
@@ -83,17 +80,11 @@ class _CustomAppBar extends StatelessWidget {
 
 class PosterAndTitle extends StatelessWidget {
 
-  final String posterPath;
-  final String movieTitle;
-  final String originalTitle;
-  final String movieVoteAverege;
+  final Movie movie;
 
   const PosterAndTitle({
     Key? key, 
-    required this.posterPath, 
-    required this.movieTitle, 
-    required this.originalTitle, 
-    required this.movieVoteAverege
+    required this.movie,
   }) : super(key: key);
 
 
@@ -105,12 +96,15 @@ class PosterAndTitle extends StatelessWidget {
       padding: EdgeInsets.symmetric( horizontal: size.width * 0.05 ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: FadeInImage(
-              placeholder: AssetImage( 'assets/no-image.jpg' ), 
-              image: NetworkImage(posterPath),
-              height: 150,
+          Hero(
+            tag: movie.heroId!,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: FadeInImage(
+                placeholder: AssetImage( 'assets/no-image.jpg' ), 
+                image: NetworkImage(movie.fullPosterImg),
+                height: 150,
+              ),
             ),
           ),
 
@@ -122,15 +116,15 @@ class PosterAndTitle extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
           
-                Text(movieTitle, style: Theme.of(context).textTheme.headline5 , overflow: TextOverflow.ellipsis, maxLines: 2,),
+                Text(movie.title, style: Theme.of(context).textTheme.headline5 , overflow: TextOverflow.ellipsis, maxLines: 2,),
           
-                Text(originalTitle, style: Theme.of(context).textTheme.subtitle1 , overflow: TextOverflow.ellipsis, maxLines: 1,),
+                Text(movie.originalTitle, style: Theme.of(context).textTheme.subtitle1 , overflow: TextOverflow.ellipsis, maxLines: 1,),
           
                 Row(
                   children: [
                     Icon( Icons.star, size: 15, color: Colors.grey, ),
                     SizedBox( width: 5 ),
-                    Text( movieVoteAverege, style: Theme.of(context).textTheme.caption )
+                    Text( movie.voteAverage.toString(), style: Theme.of(context).textTheme.caption )
                   ],
                 )
               ],
